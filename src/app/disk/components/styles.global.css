@@ -1,0 +1,52 @@
+.preview {
+  --selectedBgColor: rgb(42, 98, 217);
+
+  overflow-y: scroll;
+  background-color: #f5f6f7;
+  border-radius: 4px;
+
+  .fileInfo {
+    display: flex;
+    align-items: center;
+    padding: 8px 16px;
+    position: relative;
+    padding-right: 40px;
+
+    &.selected {
+      background-color: var(--selectedBgColor);
+      color: white;
+    }
+  }
+
+  .folderIcon {
+    width: 24px;
+    height: 24px;
+    margin-right: 8px;
+  }
+
+  &.grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    align-items: flex-start;
+    align-content: flex-start;
+    padding: 16px;
+
+    .ant-dropdown-trigger {
+      display: flex;
+    }
+
+    .fileInfo {
+      flex-direction: column;
+      justify-content: center;
+      border-radius: 4px;
+      padding: 4px 8px;
+    }
+
+    .folderIcon {
+      width: 64px;
+      height: 64px;
+      margin-right: 0;
+    }
+  }
+}

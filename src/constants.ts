@@ -1,0 +1,5 @@
+export const MAIN_DIR = "mainDir"
+export const showHiddenKey = "showHidden"
+export const dirOnlyKey = "dirOnly"
+export const favDirsKey = "favDirs"
+export const viewListKey = "viewList"
