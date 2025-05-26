@@ -98,23 +98,6 @@ export default function Previewer({ items }: Props) {
     )
   }
 
-  const [fileList, setFileList] = useState([])
-  const [uploading, setUploading] = useState(false)
-
-  const handleUpload = () => {
-    console.log(fileList, fileList[0])
-    return
-  }
-  const props = {
-    onRemove: () => {
-      setFileList([])
-    },
-    beforeUpload: file => {
-      setFileList([file])
-      return false
-    },
-  }
-
   return (
     <div className="flex flex-col gap-[8px] w-full">
       <ul className="flex items-center gap-[16px] p-[8px] bg-[#f5f6f7] rounded-[4px] mb-[4px]">
@@ -188,6 +171,7 @@ export default function Previewer({ items }: Props) {
             icon={<UploadOutlined />}
             onClick={() => {
               setIsUploadOpen(true)
+              setFileList([])
             }}
           >
             上传文件
@@ -249,13 +233,23 @@ export default function Previewer({ items }: Props) {
         onCancel={() => {
           setIsUploadOpen(false)
         }}
-        footer={[
-          <Button key="submit" type="primary" onClick={handleUpload}>
-            提交
-          </Button>,
-        ]}
+        onOk={() => {
+          setIsUploadOpen(false)
+        }}
+        destroyOnHidden
       >
-        <Upload {...props} maxCount={1}>
+        <Upload
+          action={"/api/disk/upload"}
+          name="file"
+          data={{ currentDir }}
+          maxCount={1}
+          onChange={info => {
+            if (info.file.status === "done") {
+              setIsUploadOpen(false)
+              listDir({ path: currentDir })
+            }
+          }}
+        >
           <Button icon={<UploadOutlined />}>upload</Button>
         </Upload>
       </Modal>

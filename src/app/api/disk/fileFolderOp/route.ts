@@ -66,9 +66,9 @@ export async function DELETE(request: NextRequest) {
   }
 }
 
-async function checkFileExists(filePath) {
+async function checkFileExists(filePath: string) {
   try {
-    await fs.access(filePath, fs.constants.F_OK)
+    await fs.promises.access(filePath)
     return true // 文件存在
   } catch (err) {
     return false // 文件不存在

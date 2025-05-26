@@ -11,7 +11,7 @@ export default function useBackForward(setCurrentDir: SetDirFn) {
   }
 
   const forward = () => {
-    const nextIndex = index - 1
+    const nextIndex = index + 1
     setIndex(nextIndex)
     setCurrentDir(queueRef.current[nextIndex])
   }
