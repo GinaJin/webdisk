@@ -32,15 +32,12 @@ export async function POST(request: NextRequest) {
 export async function PUT(request: NextRequest) {
   try {
     const data = await request.json()
-    console.log(data)
-    const { currentDir, folderName } = data
+    const { oldName, newName } = data
 
-    if (!currentDir)
-      return new Response("[currentDir] is required!", { status: 400 })
+    if (!oldName) return new Response("[oldName] is required!", { status: 400 })
+    if (!newName) return new Response("[newName] is required!", { status: 400 })
 
-    const oldPath = currentDir
-    const newPath = currentDir + folderName
-    await fs.promises.rename(oldPath, newPath)
+    await fs.promises.rename(oldName, newName)
     return new Response("重命名成功", { status: 200 })
   } catch (error) {
     console.error(error)

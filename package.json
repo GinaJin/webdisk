@@ -10,11 +10,17 @@
   },
   "dependencies": {
     "@ant-design/icons": "^6.0.0",
-    "antd": "^5.25.2",
-    "multer": "^2.0.0",
+    "@mantine/core": "^8.1.0",
+    "@mantine/notifications": "^8.1.0",
+    "@phosphor-icons/react": "^2.1.10",
+    "install": "^0.13.0",
+    "mantine-contextmenu": "^7.17.1",
     "next": "15.3.2",
+    "pnpm": "^10.12.1",
+    "rc-upload": "^4.9.0",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "react-use": "^17.6.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

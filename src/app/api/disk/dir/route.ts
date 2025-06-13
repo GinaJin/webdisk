@@ -5,8 +5,8 @@ import { NextRequest } from "next/server"
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams
   const currentDir = searchParams.get("currentDir")
-  const dirOnlySetting = searchParams.get(dirOnlyKey) === "true"
-  const showHiddenSetting = searchParams.get(showHiddenKey) === "true"
+  const dirOnlySetting = searchParams.get(dirOnlyKey) == "1"
+  const showHiddenSetting = searchParams.get(showHiddenKey) == "1"
 
   if (!currentDir)
     return new Response("[currentDir] is required!", { status: 400 })

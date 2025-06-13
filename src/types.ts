@@ -3,14 +3,18 @@ type ViewDir = {
   dirOnly?: boolean
   showHidden?: boolean
 }
-type Path = string
-type ViewType = "list" | "grid"
-type VoidFn = () => void
-type ListParentDirFn = VoidFn
-type SetDirFn = (path: string) => void
-type DiskContext = {
+export type Path = string
+export type FileInfoType = {
+  path: Path
+  isDir: boolean
+}
+export type ViewType = "list" | "grid"
+export type VoidFn = () => void
+export type ListParentDirFn = VoidFn
+export type SetDirFn = (path: string) => void
+export type DiskContext = {
   currentDir: string
-  selectedDir: string
+  selected: FileInfoType
   showHidden: boolean
   dirOnly: boolean
   viewType: ViewType
@@ -18,7 +22,7 @@ type DiskContext = {
   listDir: (args: any) => void
   listParentDir: ListParentDirFn
   setCurrentDir: SetDirFn
-  setSelectedDir: SetDirFn
+  setSelected: (item: FileInfoType) => void
   setHomeDir: VoidFn
   addFavDir: VoidFn
   setShowHidden: (showHidden: boolean) => void

@@ -2,14 +2,15 @@
 
 import getFileName from "@/utils/fileName"
 import { CloseOutlined } from "@ant-design/icons"
-import { use } from "react"
+import { MouseEvent, use, useMemo } from "react"
 import context from "../context"
 import FileInfoIcon, { Props as FileInfoIconProps } from "./FileInfoIcon"
 
 export type FileInfoProps = FileInfoIconProps & {
   className?: string
   onClick?: () => void
-  onRemove?: () => void
+  onRemove?: (e: MouseEvent<HTMLDivElement>) => void
+  isSelected?: boolean
 }
 
 type Props = FileInfoProps
@@ -17,12 +18,11 @@ type Props = FileInfoProps
 export default function FileInfo({
   path,
   isDir,
-  type,
-  className,
   onClick,
   onRemove,
+  isSelected,
 }: Props) {
-  const { setSelectedDir, selectedDir, go } = use(context)
+  const { setSelected, selected, go } = use(context)
   const name = getFileName(path)
 
   const handleDoubleClick = () => {
@@ -30,19 +30,21 @@ export default function FileInfo({
     go(path)
   }
 
-  const handleClick = () => {
-    if (!isDir) return
-    setSelectedDir(path)
+  const handleClick = (e: MouseEvent<HTMLLIElement>) => {
+    e.stopPropagation()
+    setSelected({ path, isDir })
     onClick?.()
   }
 
+  const selectedClassName = useMemo(() => {
+    if (isSelected) return " selected "
+    if (selected?.path === path) return " selected "
+    return ""
+  }, [isSelected, selected])
+
   return (
     <li
-      className={
-        "fileInfo" +
-        (isDir ? " dir " : " file ") +
-        (selectedDir === path ? " selected " : "")
-      }
+      className={"fileInfo" + (isDir ? " dir " : " file ") + selectedClassName}
       onDoubleClick={handleDoubleClick}
       onClick={handleClick}
     >

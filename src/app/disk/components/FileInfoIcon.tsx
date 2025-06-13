@@ -42,7 +42,9 @@ const icons = {
   gif: image,
   bpm: image,
   webp: image,
-} as any
+  svg: image,
+} as const
+type IconKey = keyof typeof icons
 
 const getFileName = ({ name, type, isDir }: Props) => {
   const target = icons[name] || icons[type]

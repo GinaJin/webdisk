@@ -1,3 +1,4 @@
+import { SetDirFn } from "@/types"
 import { useRef, useState } from "react"
 
 export default function useBackForward(setCurrentDir: SetDirFn) {

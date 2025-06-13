@@ -1,36 +1,49 @@
 "use client"
 
-import { dirOnlyKey, favDirsKey, showHiddenKey, viewListKey } from "@/constants"
+import {
+  dirOnlyKey,
+  favDirsKey,
+  homeDirKey,
+  showHiddenKey,
+  viewListKey,
+} from "@/constants"
+import { FileInfoType, ListParentDirFn, ViewType, VoidFn } from "@/types"
 import local from "@/utils/local"
+import toast from "@/utils/toast"
 import { useEffect, useState } from "react"
+import { useEffectOnce } from "react-use"
 import Fav from "./components/Fav"
-import Previewer from "./components/Previewer"
+import Main from "./components/Main"
 import Context from "./context"
 import useBackForward from "./useBackForward"
 
 export default function Disk() {
   const [currentDir, setCurrentDir] = useState("")
-  const [selectedDir, setSelectedDir] = useState("")
+  const [selected, setSelected] = useState(null as unknown as FileInfoType)
   const [showHidden, setShowHidden] = useState(false)
   const [dirOnly, setDirOnly] = useState(false)
   const [favDirs, setFavDirs] = useState([] as string[])
-  const [viewType, setViewType] = useState("list" as ViewType)
+  const [viewType, setViewType_] = useState("list" as ViewType)
   const [dirs, setDirs] = useState([])
   const { back, forward, go, canBack, canForward } =
     useBackForward(setCurrentDir)
 
-  useEffect(() => {
+  useEffectOnce(() => {
     setShowHidden(local.read(showHiddenKey, false))
     setDirOnly(local.read(dirOnlyKey, false))
     setFavDirs(local.read(favDirsKey, []))
-    setViewType(local.read(viewListKey, "list"))
-  }, [])
+    setViewType_(local.read(viewListKey, "list"))
+  })
 
-  useEffect(() => {
+  useEffectOnce(() => {
     fetch("/api/disk/home")
       .then(resp => resp.json())
+      .then(homeDir => {
+        local.save(homeDirKey, homeDir)
+        return homeDir
+      })
       .then(go)
-  }, [])
+  })
 
   const listDir = ({
     path,
@@ -46,8 +59,8 @@ export default function Disk() {
 
     const query = new URLSearchParams({
       currentDir: path,
-      showHidden: String(showHidden),
-      dirOnly: String(dirOnly),
+      showHidden: String(showHidden ? 1 : 0),
+      dirOnly: String(dirOnly ? 1 : 0),
     })
 
     fetch(`/api/disk/dir?${query}`)
@@ -66,22 +79,28 @@ export default function Disk() {
   }
 
   const setHomeDir: VoidFn = () => {
-    const homeDir = selectedDir || currentDir
+    const homeDir = selected?.path || currentDir
     fetch("/api/disk/mainDir", {
       method: "POST",
       body: JSON.stringify({ dir: homeDir }),
     })
-      .then(() => alert("设置成功"))
-      .catch(() => alert("设置失败"))
+      .then(() => {
+        toast.show("设置主目录成功!", homeDir)
+        local.save(homeDirKey, homeDir)
+      })
+      .catch(() => toast.error("设置失败"))
   }
 
   // 简单起见，本地保存
   const addFavDir: VoidFn = () => {
-    const dir = selectedDir || currentDir
+    if (!selected?.path) return toast.show("请先选择一个目录！")
+
+    const dir = selected?.path
     const old = favDirs
     const next = [...new Set([...old, dir])]
     setFavDirs(next)
     local.save(favDirsKey, next)
+    toast.show("收藏成功!", dir)
   }
   const removeFavDir = (path: string) => {
     const favSet = new Set(favDirs)
@@ -89,27 +108,27 @@ export default function Disk() {
     const next = [...favSet]
     setFavDirs(next)
     local.save(favDirsKey, next)
+    toast.show("移除收藏成功!")
   }
-  const toggleViewType = () => {
-    const old = viewType
-    const next = old === "list" ? "grid" : "list"
-    setViewType(next)
-    local.save(viewListKey, next)
+  const setViewType = (value: ViewType) => {
+    if (viewType === value) return
+    setViewType_(value)
+    local.save(viewListKey, value)
   }
 
   return (
     <Context
       value={{
         currentDir,
-        selectedDir,
+        selected,
         dirOnly,
         showHidden,
         viewType, // 视图类型
-        toggleViewType,
+        setViewType,
         listDir,
         listParentDir,
         setCurrentDir,
-        setSelectedDir,
+        setSelected,
         setHomeDir,
         addFavDir,
         setShowHidden,
@@ -124,7 +143,7 @@ export default function Disk() {
     >
       <div className="flex w-full gap-[8px]">
         <Fav items={favDirs} />
-        <Previewer items={dirs} />
+        <Main items={dirs} />
       </div>
     </Context>
   )

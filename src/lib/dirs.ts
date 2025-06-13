@@ -1,3 +1,4 @@
+import { ViewDir } from "@/types"
 import fs from "fs"
 import path from "path"
 
@@ -12,7 +13,7 @@ export async function readDir({
 }: ViewDir) {
   try {
     let items = fs.readdirSync(dir)
-
+    console.log(items)
     if (!showHidden) {
       items = items.filter(item => !item.startsWith("."))
     }
@@ -36,5 +37,9 @@ export async function readDir({
 }
 
 function isDir(path: string) {
-  return fs.statSync(path).isDirectory()
+  try {
+    return fs.statSync(path).isDirectory()
+  } catch {
+    return false
+  }
 }

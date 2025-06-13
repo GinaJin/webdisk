@@ -11,14 +11,13 @@ export async function POST(request: NextRequest) {
     if (!file) return new Response("No file provided", { status: 400 })
 
     const target = path.join(currentDir, file.name)
+    console.log({ target })
+
     const arrayBuffer = await file.arrayBuffer()
     const buffer = Buffer.from(arrayBuffer)
     await fs.promises.writeFile(target, buffer)
-
     return new Response("上传成功", { status: 200 })
-  } catch (e) {
-    return new Response("", {
-      status: 500,
-    })
+  } catch {
+    return new Response("", { status: 500 })
   }
 }
