@@ -11,3 +11,6 @@ nextjs实现管理本地文件夹
 
 1.  pnpm i
 2.  npm run dev
+
+<img width="978" alt="image" src="https://github.com/user-attachments/assets/ca9af0df-b289-4780-8ee8-1ade8ac3a133" />
+
